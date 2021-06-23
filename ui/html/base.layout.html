@@ -1,0 +1,39 @@
+{{define "base"}}
+<!doctype html>
+<html>
+
+<head>
+    <title>{{template "title" .}}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <link rel="icon" href="/static/img/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/static/css/animate.min.css" />
+    <link rel="stylesheet" href="/static/css/icomoon.css">
+    <link rel="stylesheet" href="/static/css/select2.min.css">
+    <link rel="stylesheet" href="/static/css/site.css" />
+
+    {{block "css" .}}{{end}}
+</head>
+
+<body class="">
+    {{template "menu" .}}
+    <!-- content -->
+    {{template "body" .}}
+
+    {{template "footer" .}}
+
+    <script src="/static/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/jquery.validate.min.js"></script>
+    <script src="/static/js/jquery.validate.zh.js"></script>
+    <script src="/static/js/select2.min.js"></script>
+    <script src="/static/js/select2-zh-CN.js"></script>
+    <script src="/static/js/select2-config.js"></script>
+    <script src="/static/js/site.js"></script>
+    {{block "script" .}}{{end}}
+    {{block "crudjs" .}}{{end}}
+</body>
+
+</html>
+{{end}}
