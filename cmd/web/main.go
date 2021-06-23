@@ -4,6 +4,7 @@ import (
 	"ams/pkg/models/mysqlite"
 	"database/sql"
 	"flag"
+	"html/template"
 	"log"
 	"net/http"
 	"os"
@@ -16,6 +17,7 @@ type application struct {
 	infoLog       *log.Logger
 	assets        *mysqlite.AssetModel
 	assetCategory *mysqlite.AssetCategoryModel
+	templateCache map[string]*template.Template
 }
 
 func main() {
@@ -33,11 +35,18 @@ func main() {
 	}
 	defer db.Close()
 
+	// Initialize a new template cache...
+	templateCache, err := newTemplateCache("./ui/html/")
+	if err != nil {
+		errorLog.Fatal(err)
+	}
+
 	app := &application{
 		errorLog:      errorLog,
 		infoLog:       infoLog,
 		assets:        &mysqlite.AssetModel{DB: db},
 		assetCategory: &mysqlite.AssetCategoryModel{DB: db},
+		templateCache: templateCache,
 	}
 
 	srv := &http.Server{

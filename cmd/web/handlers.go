@@ -18,6 +18,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "%v\n", category)
 	}
 }
+
 func (app *application) createAssetCategory() http.HandlerFunc {
 	return func(rw http.ResponseWriter, r *http.Request) {
 		if r.Method == "GET" {
