@@ -1,0 +1,34 @@
+{{template "base" .}}
+{{define "title"}}类型{{end}}
+
+{{define "body"}}
+<div class="container">
+    <h3 class="my-3">类型</h3>
+    <hr>
+    
+    {{if .AssetCategories}}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>编号</th>
+                <th>名称</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .AssetCategories}}
+            <tr>
+                <td>{{.ID}}</td>
+                <td>{{.Code}}</td>
+                <td>{{.Name}}</td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+    {{else}}
+    <div class="card">
+        <div class="card-body">空</div>
+    </div>
+    {{end}}
+</div>
+{{end}}

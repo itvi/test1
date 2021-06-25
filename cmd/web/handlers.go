@@ -14,9 +14,11 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, err)
 		return
 	}
-	for _, category := range categories {
-		fmt.Fprintf(w, "%v\n", category)
-	}
+	// for _, category := range categories {
+	// 	fmt.Fprintf(w, "%v\n", category)
+	// }
+	fmt.Println("index")
+	app.render(w, r, "asset/index.html", &templateData{AssetCategories: categories})
 }
 
 func (app *application) createAssetCategory() http.HandlerFunc {
