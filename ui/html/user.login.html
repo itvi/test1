@@ -1,0 +1,31 @@
+{{template "base" .}}
+{{define "title"}}Login{{end}}
+{{define "body"}}
+<div class="container mt-5">
+    <form action="/user/login" method="POST" novalidate>
+        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}"> {{with .Form}}
+        <div class="col-md-4 mb-3">
+            {{with .Errors.Get "generic"}}
+            <div class="my-2 card bg-warning">
+                <div class="card-body mx-auto">
+                    <span>{{.}}</span>
+                </div>
+            </div>
+            {{end}}
+        </div>
+        <div class="col-md-4 mb-3">
+            <label class="form-label">用户</label> {{with .Errors.Get "sn"}}
+            <label class="error">
+                <i class="icon-error-outline"></i>
+                {{.}}
+            </label> {{end}}
+            <input name="sn" class="form-control" type="text" value='{{.Get "sn"}}'>
+        </div>
+        <div class="col-md-4 mb-3">
+            <label class="form-label">密码</label>
+            <input name="password" class="form-control" type="password">
+        </div>
+        <button type="submit" class="btn btn-primary">登录</button> {{end}}
+    </form>
+</div>
+{{end}}

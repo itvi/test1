@@ -1,11 +1,16 @@
 package main
 
 import (
+	"ams/pkg/models"
 	"bytes"
 	"fmt"
+	"html/template"
 	"net/http"
+	"path/filepath"
 	"runtime/debug"
 	"time"
+
+	"github.com/justinas/nosurf"
 )
 
 func (app *application) serverError(w http.ResponseWriter, err error) {
@@ -51,6 +56,29 @@ func (app *application) addDefaultData(td *templateData, r *http.Request) *templ
 	if td == nil {
 		td = &templateData{}
 	}
+
+	td.AuthenticatedUser = app.authenticatedUser(r)
+	td.CSRFToken = nosurf.Token(r)
 	td.CurrentYear = time.Now().Year()
+	td.Flash = app.session.PopString(r, "flash")
 	return td
+}
+
+func (app *application) authenticatedUser(r *http.Request) *models.User {
+	user, ok := r.Context().Value(contextKeyUser).(*models.User)
+	if !ok {
+		return nil
+	}
+	return user
+}
+
+// PartialView only render one template
+func renderPartialView(w http.ResponseWriter, data interface{}, file string) {
+	fileName := filepath.Base(file)
+
+	t, err := template.New(fileName).Funcs(functions).ParseFiles(file)
+	if err != nil {
+		fmt.Println("Parse PartialView err: ", err)
+	}
+	t.Execute(w, data)
 }

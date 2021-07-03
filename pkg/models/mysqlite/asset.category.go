@@ -109,3 +109,16 @@ func (m *AssetCategoryModel) GetCategoryByID(id int) (*models.AssetCategory, err
 	}
 	return c, nil
 }
+
+func (m *AssetCategoryModel) GetCategoryByCode(code string) (*models.AssetCategory, error) {
+	q := `SELECT id,code,name FROM asset_category WHERE code=?`
+	c := &models.AssetCategory{}
+
+	err := m.DB.QueryRow(q, code).Scan(&c.ID, &c.Code, &c.Name)
+	if err == sql.ErrNoRows {
+		return nil, models.ErrNoRecord
+	} else if err != nil {
+		return nil, err
+	}
+	return c, nil
+}

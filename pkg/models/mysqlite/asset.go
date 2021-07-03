@@ -23,7 +23,8 @@ func (m *AssetModel) Add(d *models.Asset) error {
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(d.Number, d.Category.Code, d.Unit, d.Supplier, d.Model, d.SN, d.Warranty, d.Remark)
+	warranty := d.Warranty.Format("2006-01-02")
+	_, err = stmt.Exec(d.Number, d.Category.Code, d.Unit, d.Supplier, d.Model, d.SN, warranty, d.Remark)
 	if err != nil {
 		if strings.Contains(err.Error(), "UNIQUE") {
 			return models.ErrDuplicate
@@ -33,13 +34,15 @@ func (m *AssetModel) Add(d *models.Asset) error {
 }
 
 func (m AssetModel) Edit(d *models.Asset) error {
-	stmt, err := m.DB.Prepare(`UPDATE asset SET number=?,category_code=?,supplier=?,model=?,sn=? WHERE id=?;`)
+	stmt, err := m.DB.Prepare(`UPDATE asset SET number=?,category_code=?,supplier=?,model=?,sn=?,
+	warranty=?,remark=? WHERE id=?;`)
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(d.Number, d.Category.Code, d.Supplier, d.Model, d.SN, d.ID)
+	warranty := d.Warranty.Format("2006-01-02")
+	_, err = stmt.Exec(d.Number, d.Category.Code, d.Supplier, d.Model, d.SN, warranty, d.Remark, d.ID)
 	if err != nil {
 		if strings.Contains(err.Error(), "UNIQUE") {
 			return models.ErrDuplicate
@@ -91,11 +94,12 @@ func (m AssetModel) GetAssetByID(id int) (*models.Asset, error) {
 	d := &models.Asset{}
 	q := `select a.id,a.number,
 				 b.id category_id, b.code category_code, b.name category_name,
-				 a.supplier, a.model, a.sn
+				 a.supplier, a.model, a.sn,a.warranty,a.remark
 		  from asset a
-		  join device_category b on a.category_code = b.code where a.id=?`
+		  join asset_category b on a.category_code = b.code where a.id=?`
 
-	if err := m.DB.QueryRow(q, id).Scan(&d.ID, &d.Number, &d.Category.ID, &d.Category.Code, &d.Category.Name, &d.Supplier, &d.Model, &d.SN); err != nil {
+	if err := m.DB.QueryRow(q, id).Scan(&d.ID, &d.Number, &d.Category.ID, &d.Category.Code,
+		&d.Category.Name, &d.Supplier, &d.Model, &d.SN, &d.Warranty, &d.Remark); err != nil {
 		return nil, err
 	}
 
@@ -160,7 +164,9 @@ func (m AssetModel) Upload(files []*multipart.FileHeader) error {
 
 	// insert into database
 	err := m.insert(myFiles)
-
+	if err != nil {
+		//TODO：delete uploaded file！
+	}
 	return err
 }
 

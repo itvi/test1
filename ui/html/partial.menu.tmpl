@@ -1,0 +1,51 @@
+{{define "menu"}}
+<nav class="navbar navbar-expand-lg navbar-dark shadow" style="background-color:#4385F5">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/"><i class="icon-home"></i> AMS</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        基础信息 <i class="icon-arrow-down"></i>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="#">单位</a> </li>
+                        <li>
+                            <a class="dropdown-item" href="#">资产 <i class="icon-arrow-right"></i></a>
+                            <ul class="submenu dropdown-menu">
+                                <li><a class="dropdown-item" href="/asset/categories">类型</a></li>
+                                <li><a class="dropdown-item" href="/asset/statuses">状态</a></li>
+                                <li><a class="dropdown-item" href="/assets">信息</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item"> <a href="/asset/management/mov" class="nav-link">资产管理</a></li>
+                <li class="nav-item"> <a href="/inventory" class="nav-link">查库存...</a> </li>
+                <li class="nav-item"> <a class="nav-link" href="/computer/config/init">?</a> </li>
+                <li class="nav-item"> <a class="nav-link" href="/upload">上传文件</a> </li>
+            </ul>
+            <!-- <form class="d-flex">
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form> -->
+            <ul class="navbar-nav">
+                {{if .AuthenticatedUser}}
+                <form action="/user/logout" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+                    <button class="btn btn-link" style="color: #E9E7E5;">退出 ({{.AuthenticatedUser.Name}})</button>
+                </form>
+                {{else}}
+                    <li class="nav-item"><a href="/user/signup" class="nav-link">注册</a></li>
+                    <li class="nav-item"><a href="/user/login" class="nav-link">登录</a></li>
+                {{end}}
+            </ul>
+        </div>
+    </div>
+</nav>
+{{end}}

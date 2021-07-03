@@ -1,0 +1,32 @@
+{{template "base" .}}
+{{define "title"}}类型{{end}}
+{{define "body"}}
+    <div class="container">
+        <h4 class="my-3">编辑</h4>
+        <hr>
+        <form action="/asset/categories/{{.AssetCategory.ID}}" method="POST">
+            <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+            <div class="mb-3">
+                <label for="code" class="form-label">编号</label>
+                {{with .Form.Errors.Get "code"}}
+                    <label class="error">
+                        <i class="icon-error-outline"></i>
+                        {{.}}
+                    </label>
+                {{end}}
+                <input type="text" id="code" name="code" class="form-control" value='{{.AssetCategory.Code}}'>
+            </div>
+            <div class="mb-3">
+                <label for="name" class="form-label">名称</label>
+                {{with .Form.Errors.Get "name"}}
+                    <label class="error">
+                        <i class="icon-error-outline"></i>
+                        {{.}}
+                    </label>
+                {{end}}
+                <input type="text" id="name" name="name" class="form-control" value='{{.AssetCategory.Name}}'>
+            </div>
+            <input type="submit" value="保存" class="btn btn-primary"/>
+        </form>
+    </div>
+{{end}}

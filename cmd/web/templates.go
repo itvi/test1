@@ -2,6 +2,7 @@ package main
 
 import (
 	"ams/pkg/models"
+	"ams/pkg/models/forms"
 	"fmt"
 	"html/template"
 	"path/filepath"
@@ -11,10 +12,17 @@ import (
 )
 
 type templateData struct {
-	CurrentYear     int
-	Asset           *models.Asset
-	AssetCategory   *models.AssetCategory
-	AssetCategories []*models.AssetCategory
+	AuthenticatedUser *models.User
+	CSRFToken         string
+	CurrentYear       int
+	Flash             string
+	Form              *forms.Form
+	Asset             *models.Asset
+	Assets            []*models.Asset
+	AssetCategory     *models.AssetCategory
+	AssetCategories   []*models.AssetCategory
+	AssetStatus       *models.AssetStatus
+	AssetStatuses     []*models.AssetStatus
 }
 
 var functions = template.FuncMap{
@@ -67,7 +75,7 @@ func newTemplateCache(dir string) (map[string]*template.Template, error) {
 	// Use the filepath.Glob function to get a slice of all filepaths with
 	// the sub directories. This essentially gives us a slice of all the
 	// 'page' templates for the application.
-	pages, err := filepath.Glob(filepath.Join(dir, "*/*.html"))
+	pages, err := filepath.Glob(filepath.Join(dir, "*.html"))
 	if err != nil {
 		return nil, err
 	}
@@ -78,7 +86,7 @@ func newTemplateCache(dir string) (map[string]*template.Template, error) {
 	for _, page := range pages {
 		// Extract the file name (like 'home.page.tmpl') from the full file pat
 		// and assign it to the name variable.
-		path := strings.Replace(page, dir, "", -1) //  "asset/index.html"
+		//path := strings.Replace(page, dir, "", -1) //  "asset/index.html"
 		// fmt.Println("path:",path)
 		name := filepath.Base(page)
 
@@ -91,20 +99,20 @@ func newTemplateCache(dir string) (map[string]*template.Template, error) {
 		// Use the ParseGlob method to add any 'layout' templates to the
 		// template set (in our case, it's just the 'base' layout at the
 		// moment).
-		ts, err = ts.ParseGlob(filepath.Join(dir, "*.layout.html"))
+		ts, err = ts.ParseGlob(filepath.Join(dir, "layout.*.tmpl"))
 		if err != nil {
 			return nil, err
 		}
 		// Use the ParseGlob method to add any 'partial' templates to the
 		// template set (in our case, it's just the 'footer' partial at the
 		// moment).
-		ts, err = ts.ParseGlob(filepath.Join(dir, "*.partial.html"))
+		ts, err = ts.ParseGlob(filepath.Join(dir, "partial.*.tmpl"))
 		if err != nil {
 			return nil, err
 		}
 		// Add the template set to the cache, using the name with path of the page
-		// (like 'home/index.html') as the key.
-		cache[path] = ts
+		// (like 'home.index.html') as the key.
+		cache[name] = ts
 	}
 	// Return the map.
 	return cache, nil

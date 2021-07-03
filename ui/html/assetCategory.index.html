@@ -1,11 +1,10 @@
 {{template "base" .}}
 {{define "title"}}类型{{end}}
-
 {{define "body"}}
 <div class="container">
     <h3 class="my-3">类型</h3>
     <hr>
-    
+    {{template "toolbar-crud"}}
     {{if .AssetCategories}}
     <table class="table">
         <thead>
@@ -31,4 +30,20 @@
     </div>
     {{end}}
 </div>
+{{end}}
+
+{{define "script"}}
+<script>
+    // curd functions
+    var formData = new FormData();
+    formData.append("csrf_token", "{{.CSRFToken}}");
+    var del = {
+        url: '/asset/categories/', id: 0, returnUrl: '/asset/categories',
+        data: formData
+    }
+    var add = { url: '/asset/category' }
+    var edit = { url: '/asset/categories/', id: 0, returnUrl: '/asset/categories' }
+    action(add, edit, del);
+</script>
+
 {{end}}

@@ -1,0 +1,177 @@
+body {
+    background-color: #F2F2F2;
+}
+
+.container {
+    background-color: white;
+    padding: 30px;
+}
+
+.error {
+    color: red;
+}
+
+.selected {
+    background-color: #DBE9FF !important;
+}
+
+/*------------------------------------
+ navbar
+ ---------------------------------- */
+
+
+/* remove default arrow down */
+
+.dropdown-toggle::after {
+    content: none;
+}
+
+.dropdown-item {
+    color: whitesmoke;
+}
+
+.dropdown-item:focus,
+.dropdown-item:hover,
+.dropdown-menu:focus,
+.dropdown-menu>li:hover {
+    background-color: #0D6EFD !important;
+    color: white !important;
+}
+
+.dropdown-menu,
+.dropdown-menu .submenu {
+    background-color: #4385F5;
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
+    border: 0;
+    border-radius: 0;
+}
+
+/* .dropdown-menu:focus{
+    background-color: #0D6EFD !important;
+} */
+
+/* end navbar */
+
+
+/* --------------------------------------
+  jquery-dataTables
+---------------------------------------*/
+
+
+/* reorder column */
+
+table.DTCR_clonedTable.dataTable {
+    position: absolute !important;
+    background-color: #DBE9FF;
+    z-index: 202
+}
+
+div.DTCR_pointer {
+    width: 4px;
+    background-color: #0D6EFD;
+    z-index: 201
+}
+
+table.mydts th,
+table.mydts td {
+    text-align: center;
+    white-space: nowrap;
+}
+
+.dt-buttons {
+    float: right !important;
+    display: inline;
+}
+
+.buttons-excel {
+    padding: 3px 8px !important;
+    margin-left: 2px;
+    border-radius: 4px;
+}
+
+
+/*how many items to show*/
+
+.dataTables_length {
+    float: left;
+}
+
+
+/* search inputbox */
+
+.dataTables_filter {
+    text-align: right !important;
+}
+
+.dataTables_info {
+    display: inline;
+}
+
+.dataTables_paginate {
+    display: inline-flex;
+    float: right;
+}
+
+
+/* end jquery-dataTables */
+
+
+/* ------------------------------
+  select2 
+-------------------------------*/
+
+.select2-container--default .select2-selection--single {
+    height: 2.5rem !important;
+    line-height: 2.5rem !important;
+    border: 1px solid #ced4da !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow,
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    height: 2.5rem !important;
+    line-height: 2.5rem !important;
+}
+
+.select2-search--dropdown .select2-search__field {
+    outline: none;
+}
+
+
+/* end select2 */
+
+
+/* -----------------------------------
+  bootstrap-notify 
+------------------------------------*/
+
+.close[data-notify="dismiss"] {
+    position: absolute;
+    top: 0.5rem;
+    right: 1rem;
+    border: 0 !important;
+    background-color: transparent;
+    /* color: white; */
+    font-size: 1.2rem;
+}
+
+[data-notify="container"] {
+    margin-bottom: 0px;
+    position: absolute;
+    top: 0px !important;
+    bottom: 0px;
+    left: 0px;
+    width: 100%;
+    height: 60px;
+    text-align: center;
+}
+
+.alert-success {
+    color: white;
+    background-color: #198754;
+}
+
+.alert-success .close {
+    color: white;
+}
+
+/* end bootstrap-notify */

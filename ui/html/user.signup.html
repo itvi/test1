@@ -1,0 +1,54 @@
+{{template "base" .}}
+{{define "title"}}注册{{end}}
+{{define "body"}}
+    <div class="container">
+        <h4 class="my-3">注册</h4>
+        <hr>
+        <form action="/user/signup" method="POST" novalidate>
+            <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+            {{with .Form}}
+                <div class="mb-3">
+                    <label for="sn" class="form-label">员工编号</label>
+                    {{with .Errors.Get "sn"}}
+                        <label class="error">
+                            <i class="icon-error-outline"></i>
+                            {{.}}
+                        </label>
+                    {{end}}
+                    <input type="text" id="sn" name="sn" class="form-control" value='{{.Get "sn"}}' data-length="8">
+                </div>
+                <div class="mb-3">
+                    <label for="name" class="form-label">员工姓名</label>
+                    {{with .Errors.Get "name"}}
+                        <label class="error">
+                            <i class="icon-error-outline"></i>
+                            {{.}}
+                        </label>
+                    {{end}}
+                    <input type="text" id="name" name="name" class="form-control" value='{{.Get "name"}}'>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">邮箱</label>
+                    {{with .Errors.Get "email"}}
+                        <label class="error">
+                            <i class="icon-error-outline"></i>
+                            {{.}}
+                        </label>
+                    {{end}}
+                    <input type="emailF" id="email" name="email" class="form-control" value='{{.Get "email"}}'>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">密码</label>
+                    {{with .Errors.Get "password"}}
+                        <label class="error">
+                            <i class="icon-error-outline"></i>
+                            {{.}}
+                        </label>
+                    {{end}}
+                    <input type="password" id="password" name="password" class="form-control">
+                </div>
+                <input type="submit" value="注册" class="btn btn-primary"/>
+            {{end}}
+        </form>
+    </div>
+{{end}}

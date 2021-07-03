@@ -1,0 +1,143 @@
+{{template "base" .}}
+{{define "title"}}资产{{end}}
+{{define "css"}}
+    <link rel="stylesheet" href="/static/datatables/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="/static/datatables/css/buttons.bootstrap5.min.css">
+    <link rel="stylesheet" href="/static/datatables/css/fixedColumns.bootstrap5.min.css">
+{{end}}
+{{define "body"}}
+    <div class="container">
+        <h3>资产</h3>
+        <hr>
+        <div class="mb-3">
+            {{template "toolbar-crud"}}
+        </div>
+        <table id="table-asset" class="table table-bordered mydts">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>资产编号</th>
+                    <th>类型编号</th>
+                    <th>资产类型</th>
+                    <th>单位</th>
+                    <th>供应商</th>
+                    <th>型号</th>
+                    <th>序列号</th>
+                    <th>质保期</th>
+                    <th>备注</th>
+                    <th>创建日期</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+{{end}}
+{{define "script"}}
+    <script src="/static/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="/static/datatables/js/dataTables.bootstrap5.min.js"></script>
+    <script src="/static/datatables/js/dataTables.buttons.min.js"></script>
+    <script src="/static/datatables/js/buttons.html5.min.js"></script>
+    <script src="/static/datatables/js/jszip.min.js"></script>
+    <script src="/static/datatables/js/ColReorderWithResize.js"></script>
+    <script src="/static/datatables/js/dataTables.fixedColumns.min.js"></script>
+    <script src="/static/datatables/js/fixedColumns.bootstrap5.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var table = $('#table-asset').DataTable({
+                "language": {
+                    "url": "/static/datatables/js/datatables-zh.json"
+                },
+                "ajax": {
+                    "url": '/assets/list',
+                    "dataSrc": ""
+                },
+                dom: 'RlfBrtip',
+                buttons: [
+                    {
+                        extend: 'excel',
+                        text: '',
+                        exportOptions: {
+                            modifier: {
+                                page: 'all'
+                            }
+                        }
+                    }
+                ],
+                "initComplete": function (settings, json) {
+                    console.log("complete");
+                    $('.dataTables_filter').prepend($('#example_length'));
+                    $('.dt-buttons').appendTo('.dataTables_filter');
+                    $('.buttons-excel')
+                        .removeClass('dt-button')
+                        .addClass('btn btn-success');
+                    $('<i class="icon-download"></i>').appendTo($('.buttons-excel'));
+                    $('.circle').text(json.length);
+                },
+                scrollY: "50vh",
+                scrollX: true,
+                scrollCollapse: true,
+                fixedColumns: {
+                    leftColumns: 2,
+                    //rightColumns: 1
+                },
+                columns: [
+                    {
+                        data: 'ID'
+                    }, {
+                        data: 'Number'
+                    }, {
+                        data: 'Category.Code',
+                        visible: false
+                    }, {
+                        data: 'Category.Name'
+                    }, {
+                        data: 'Unit'
+                    }, {
+                        data: 'Supplier'
+                    }, {
+                        data: 'Model'
+                    }, {
+                        data: 'SN'
+                    }, {
+                        data: 'Warranty',
+                        render: function (data) {
+                            return data
+                                .replace("T", " ")
+                                .slice(0, 10);
+                        }
+                    }, {
+                        data: 'Remark'
+                    }, {
+                        data: 'Created',
+                        render: function (data) {
+                            return data
+                                .replace("T", " ")
+                                .slice(0, 19);
+                        }
+                    }
+                ]
+            }); // end table
+            $('#table-asset tbody').on('click', 'tr', function () {
+                $('tr').removeClass('selected');
+                $(this).addClass('selected');
+            })
+            // curd functions
+            var formData = new FormData();
+            formData.append("csrf_token", "{{ .CSRFToken }}");
+            var del = {
+                url: '/assets/',
+                id: 0,
+                returnUrl: '/assets',
+                data: formData
+            }
+            var add = {
+                url: '/asset'
+            }
+            var edit = {
+                url: '/assets/',
+                id: 0,
+                returnUrl: '/assets'
+            }
+            action(add, edit, del);
+        });
+    </script>
+{{end}}

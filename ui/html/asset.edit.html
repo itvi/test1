@@ -1,0 +1,56 @@
+{{template "base" .}}
+{{define "title"}}资产{{end}}
+{{define "css"}}
+    <link rel="stylesheet" href="/static/css/select2.min.css">
+{{end}}
+{{define "body"}}
+    <div class="container">
+        <h4 class="my-3">编辑</h4>
+        <hr>
+        <form action="/assets/{{.Asset.ID}}" method="POST">
+            <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+            <div class="mb-3">
+                <label for="asset_number" class="form-label">编号</label>
+                {{with .Form.Errors.Get "asset_number"}}
+                    <label class="error">
+                        <i class="icon-error-outline"></i>
+                        {{.}}
+                    </label>
+                {{end}}
+                <input type="text" id="asset_number" name="asset_number" class="form-control" value='{{.Asset.Number}}' required>
+            </div>
+            <div class="mb-2 col-md-3">
+                <label class="form-label">类型</label>
+                <select class="category form-select" name="category_code" id="category_code">
+                    <option value="{{.Asset.Category.Code}}" selected="selected">{{.Asset.Category.Name}}</option>
+                </select>
+            </div>
+            <div class="mb-2">
+                <label class="form-label">供应商</label>
+                <input type="text" id="supplier" name="supplier" class="form-control" value='{{.Asset.Supplier}}'>
+            </div>
+            <div class="mb-2">
+                <label class="form-label">型号</label>
+                <input type="text" id="model" name="model" class="form-control" value='{{.Asset.Model}}'>
+            </div>
+            <div class="mb-2">
+                <label class="form-label">序列号</label>
+                <input type="text" id="sn" name="sn" class="form-control" value='{{.Asset.SN}}'>
+            </div>
+            <div class="mb-2 col-md-2">
+                <label class="form-label">质保期</label>
+                <input type="date" id="warranty" name="warranty" class="form-control" value='{{.Asset.Warranty.Format "2006-01-02"}}'>
+            </div>
+            <div class="mb-2">
+                <label for="remark">备注</label>
+                <textarea name="remark" id="remark" class="form-control">{{.Asset.Remark}}</textarea>
+            </div>
+            <input type="submit" value="保存" class="btn btn-primary"/>
+        </form>
+    </div>
+{{end}}
+{{define "script"}}
+    <script src="/static/js/select2.full.min.js"></script>
+    <script src="/static/js/zh-CN.js"></script>
+    <script src="/static/js/myselect2.js"></script>
+{{end}}

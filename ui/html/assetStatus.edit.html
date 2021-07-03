@@ -1,0 +1,22 @@
+{{template "base" .}}
+{{define "title"}}状态{{end}}
+{{define "body"}}
+    <div class="container">
+        <h4 class="my-3">编辑</h4>
+        <hr>
+        <form action="/asset/statuses/{{.AssetStatus.ID}}" method="POST">
+            <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+            <div class="mb-3">
+                <label for="name" class="form-label">名称</label>
+                {{with .Form.Errors.Get "name"}}
+                    <label class="error">
+                        <i class="icon-error-outline"></i>
+                        {{.}}
+                    </label>
+                {{end}}
+                <input type="text" id="name" name="name" class="form-control" value='{{.AssetStatus.Name}}'>
+            </div>
+            <input type="submit" value="保存" class="btn btn-primary"/>
+        </form>
+    </div>
+{{end}}

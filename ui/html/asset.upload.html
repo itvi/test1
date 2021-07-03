@@ -1,0 +1,94 @@
+{{template "base" .}}
+{{define "title"}}导入{{end}}
+{{define "css"}}
+<link rel="stylesheet" href="/static/css/filepond.min.css">
+<style>
+    /* 文件区域 */
+    .filepond--panel-root {
+        border-radius: 2px;
+    }
+
+    /* 文件列表 */
+    .filepond--item-panel {
+        border-radius: 2px;
+    }
+
+    .btn {
+        border-radius: 2px;
+    }
+</style>
+{{end}}
+
+{{define "body"}}
+<div class="container mt-2">
+    <input type="file" name="files" multiple />
+    <button id="upload" class="btn btn-primary">导入</button>
+    <div id="spinner" class="spinner-border" role="status" style="vertical-align: middle;display:none;"></div>
+</div>
+{{end}}
+
+{{define "script"}}
+<script src="/static/js/filepond.min.js"></script>
+<script src="/static/js/filepond-plugin-file-validate-type.min.js"></script>
+<script>
+    FilePond.registerPlugin(FilePondPluginFileValidateType);
+    const inputElement = document.querySelector('input[type="file"]');
+    const pond = FilePond.create(inputElement, {
+        instantUpload: false,
+        credits: false,
+        server: '/upload',
+        // < excel 2003: application/vnd.ms-excel
+        // >= excel 2007: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+        acceptedFileTypes: ["application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"],
+        allowReorder: true,
+        labelIdle: '拖放文件或点击',
+        labelTapToCancel: '',
+        labelFileProcessing: '请稍候',
+        labelFileProcessingComplete: '完成',
+        labelTapToUndo: '',
+        labelFileTypeNotAllowed: '格式错误！',
+        fileValidateTypeLabelExpectedTypes: '文件格式应为 xlsx'
+    });
+
+    var upload = document.getElementById('upload');
+    var spinner = document.getElementById('spinner');
+    upload.addEventListener('click', function () {
+        var files = pond.getFiles();
+        if (files.length == 0) {
+            toast("文件", "请选择文件");
+            return;
+        }
+
+        spinner.style.display = "inline-block";
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", '/upload');
+
+        // pass all files to server!
+        var formData = new FormData();
+        files.forEach(f => {
+            formData.append("files", f.file);
+        })
+
+        formData.append("csrf_token", "{{.CSRFToken}}");
+        xhr.send(formData);
+        xhr.onload = function () {
+            if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 304) {
+                console.log('upload success.');
+                var result = JSON.parse(xhr.responseText);
+                if (result == "") {
+                    console.log("import success")
+                    toast("成功", "导入成功！");
+                    pond.removeFiles();
+                } else {
+                    console.log("error:", result)
+                    toast("错误", result);
+                }
+                spinner.style.display = "none";
+            }
+        };
+        xhr.onerror = function (e) {
+            console.log("error:", e);
+        }
+    })
+</script>
+{{end}}

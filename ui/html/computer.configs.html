@@ -1,0 +1,132 @@
+<input id="info" type="hidden" value="{{.GenericString}}">
+
+{{if .ComputerConfig}}
+    {{range .ComputerConfig}}
+        <div class="card text-dark bg-light mb-3">
+            <div class="card-header">
+                <h5>{{.IP}}</h5>
+            </div>
+            <div class="card-body" style="background-color: white;">
+                <ul class="list-group list-group-flush">
+                    {{with .CS}}
+                        <h5>电脑系统</h5>
+                        {{range .}}
+                            <li class="list-group-item">
+                                <span class="label">主机名</span>
+                                <span class="value">{{.HostName}}</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="label">登录用户</span>
+                                <span class="value">{{.UserName}}</span>
+                            </li>
+                        {{end}}
+                    {{end}}
+
+                    {{with .OS}}
+                        <h5>操作系统</h5>
+                        {{range .}}
+                            <li class="list-group-item">
+                                <span class="label">操作系统</span>
+                                <span class="value">{{.Caption}}</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="label">版本</span>
+                                <span class="value">{{.Version}}</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="label">安装日期</span>
+                                <span class="value">{{.InstallDate|fd}}</span>
+                            </li>
+                        {{end}}
+                    {{end}}
+
+                    {{with .CPU}}
+                        <h5>CPU ({{len .}})</h5>
+                        {{range .}}
+                            <li class="list-group-item">
+                                <span class="label">名称</span><span class="value">{{.Name}}</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="label">核心</span><span class="value">{{.Cores}}</span>
+                            </li>
+                        {{end}}
+                    {{end}}
+
+                    {{with .Disk}}
+                        <h5>硬盘 ({{len .}})</h5>
+                        {{range .}}
+                            <li class="list-group-item">
+                                <span class="label">型号</span><span class="value">{{.Model}}</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="label">容量</span><span class="value">{{.Size|GB}}</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="label">序列号</span><span class="value">{{.SN}}</span>
+                            </li>
+                        {{end}}
+                    {{end}}
+
+                    {{with .Mem}}
+                        <h5>内存 ({{len .}})</h5>
+                        {{range .}}
+                            <li class="list-group-item">
+                                <span class="label">型号</span><span class="value">{{.Manufacturer}}</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="label">容量</span><span class="value">{{.Capacity|GB}}</span>
+                            </li>
+                        {{end}}
+                    {{end}}
+
+                    {{with .Net}}
+                        <h5>网卡 ({{len .}})</h5>
+                        {{range .}}
+                            <li class="list-group-item">
+                                <span class="label">名称</span><span class="value">{{.Description}}</span>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="label">MAC</span><span class="value">{{.MAC}}</span>
+                            </li>
+                        {{end}}
+                    {{end}}
+
+                    {{with .Product}}
+                        <h5>应用程序 ({{len .}})</h5>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>名称</th>
+                                    <th>版本</th>
+                                    <th>发布者</th>
+                                    <th>安装时间</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{range .}}
+                                    <tr>
+                                        <td>{{.Name}}</td>
+                                        <td>{{.Version}}</td>
+                                        <td>{{.Vendor}}</td>
+                                        <td>{{.InstallDate}}</td>
+                                    </tr>
+                                {{end}}
+                            </tbody>
+                            <tfoot></tfoot>
+                        </table>
+                    {{end}}
+                </ul>
+            </div>
+        </div>
+    {{end}}
+    <div class="input-group">
+        <button id="init" class="btn btn-danger input-group-text mb-3">
+            <span class="spinner-border spinner-border-sm visually-hidden"></span>
+        +
+    </button>
+    </div>
+{{else}}
+    <div class="card bg-warning">
+        <div class="card-body">无法访问</div>
+    </div>
+{{end}}

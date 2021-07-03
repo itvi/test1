@@ -1,0 +1,47 @@
+{{template "base" .}}
+{{define "title"}}状态{{end}}
+{{define "body"}}
+<div class="container">
+    <h3 class="my-3">状态</h3>
+    <hr>
+    {{template "toolbar-crud"}}
+    {{if .AssetStatuses}}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>名称</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .AssetStatuses}}
+            <tr>
+                <td>{{.ID}}</td>
+                <td>{{.Name}}</td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+    {{else}}
+    <div class="card">
+        <div class="card-body">空</div>
+    </div>
+    {{end}}
+</div>
+{{end}}
+
+{{define "script"}}
+<script>
+    // curd functions
+    var formData = new FormData();
+    formData.append("csrf_token", "{{.CSRFToken}}");
+    var del = {
+        url: '/asset/statuses/', id: 0, returnUrl: '/asset/statuses',
+        data: formData
+    }
+    var add = { url: '/asset/status' }
+    var edit = { url: '/asset/statuses/', id: 0, returnUrl: '/asset/statuses' }
+    action(add, edit, del);
+</script>
+
+{{end}}

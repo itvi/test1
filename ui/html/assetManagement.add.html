@@ -1,0 +1,294 @@
+{{template "base" .}}
+{{define "title"}}资产管理{{end}}
+
+{{define "css"}}
+<link rel="stylesheet" href="/static/css/select2.min.css">
+<style>
+    .value {
+        width: 80%;
+        float: right;
+    }
+
+    h5 {
+        padding: 10px;
+        background-color: #E4E5E7;
+        border-radius: 4px;
+        font-size: 1.2rem;
+        font-weight: bolder;
+    }
+
+    .ip-error {
+        color: red;
+    }
+</style>
+{{end}}
+
+{{define "body"}}
+<div class="container">
+    <div class="row">
+        <h3 class="col">资产</h3>
+        <div class="col" id="div-chkConfig" style="display:none">
+            <div class="form-check float-end">
+                <input class="form-check-input" type="checkbox" value="" id="chkConfig">
+                <label class="form-check-label" for="chkConfig">
+                    配置信息
+                </label>
+            </div>
+            <div id="div-ip" class="input-group" style="display: none;">
+                <input id="ip" type="text" class="form-control" placeholder="请输入IP地址">
+                <button id="search" class="btn btn-primary input-group-text">
+                    <span class="spinner-border spinner-border-sm visually-hidden"></span>
+                    查看配置
+                </button>
+            </div>
+            <span class="ip-error" style="display: none;"></span>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col">
+            <form>
+                <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+                {{with .Form}}
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="">资产编号</label>
+                        <select class="form-select" id="asset_number" name="asset_number" required>
+                            <option value='{{.Get "asset_number"}}'>{{.Get "asset_number"}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="">资产移动</label>
+                        <select name="mvt" id="mvt" class="form-select">
+                            <option value="">请选择</option>
+                            <option value="I01">入库</option>
+                            <option value="I02">入库-冲销</option>
+                            <option value="G01">领用</option>
+                            <option value="G02">领用-冲销</option>
+                            <option value="T01">调拨</option>
+                            <option value="T02">调拨-冲销</option>
+                            <option value="R01">归还</option>
+                            <option value="R01">归还-冲销</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="">移动日期</label>
+                        <input type="date" class="form-control" id="doc_date" name="doc_date">
+                    </div>
+                </div>
+                <div class="row mb-3 from">
+                    <div class="col-md-6">
+                        <label for="">发出人(员工编号) →</label>
+                        <input type="text" class="form-control" name="from_employee">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="">发出地 →</label>
+                        <input type="text" class="form-control" name="from_loc">
+                    </div>
+                </div>
+                <div class="row mb-3 to">
+                    <div class="col-md-6">
+                        <label for="">接收人(员工编号) ←</label>
+                        <input type="text" class="form-control" name="to_employee">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="">接收地 ←</label>
+                        <input type="text" class="form-control" name="to_loc">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-2">
+                        <label for="">数量</label>
+                        <input type="number" class="form-control" name="qty" value="1">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label for="">备注</label>
+                        <textarea name="remark" id="remark" class="form-control"></textarea>
+                    </div>
+                </div>
+                <button type="button" id="save" class="btn btn-primary">保存</button> {{end}}
+            </form>
+        </div>
+        <div class="col">
+            <div id="config"></div>
+        </div>
+    </div>
+</div>
+{{end}}
+
+{{define "script"}}
+<script src="/static/js/select2.full.min.js"></script>
+<script src="/static/js/zh-CN.js"></script>
+<script src="/static/js/myselect2.js"></script>
+<script>
+    $('#doc_date').val(today());
+
+    $('#chkConfig').click(function () {
+        if ($(this).prop('checked')) {
+            $('#div-ip').show();
+            $('.ip-error').show();
+        } else {
+            $('#div-ip').hide();
+            $('.ip-error').hide();
+        }
+    });
+    $('#search').click(function () {
+        console.log("search click")
+        $('.ip-error').text('');
+        var ip = document.querySelector('#ip').value;
+        if (ip.trim() == "") {
+            $('.ip-error').text("请输入IP地址");
+            return
+        }
+        if (isIP(ip)) {
+            $('.spinner-border').removeClass('visually-hidden')
+            $(this).addClass('disabled');
+            $.ajax({
+                url: '/computer/config/search',
+                data: {
+                    ip: ip
+                },
+                success: function (r) {
+                    $('#config').html(r);
+                    $('.spinner-border').addClass('visually-hidden');
+                    $('#search').removeClass('disabled');
+                },
+                error: function (jqxhr, textStatus, error) {
+                    console.log(jqxhr)
+                    $('.spinner-border').addClass('visually-hidden');
+                    $('#search').removeClass('disabled');
+                    notify(xhr.status + " " + xhr.statusText);
+                }
+            })
+        } else {
+            $('.ip-error').text("请输入有效的IP地址！");
+        }
+    });
+
+    $('#asset_number').select2({
+        placeholder: "资产编号",
+        language: "zh-CN",
+        ajax: {
+            url: '/assets/dropdown',
+            dataType: 'json',
+            data: function (p) {
+                return {
+                    q: p.term,
+                    page: p.page
+                };
+            },
+            processResults: function (data) {
+                var r = [];
+                var select2Data = $.map(data, function (o) {
+                    var obj = new Object();
+                    obj.id = o.ID;
+                    obj.text = o.Number;
+                    obj.category = o.Category.Name;
+                    r.push(obj);
+                    return obj;
+                });
+                return {
+                    results: select2Data
+                };
+            }
+        },
+        templateResult: formatDevice
+    });
+
+    function formatDevice(result) {
+        if (!result.id) {
+            return result.text;
+        }
+        var $device = $('<span>' + result.text + '</span> <span>' + result.category + '</i></span> ');
+        return $device;
+    };
+
+    $('#mvt').change(function () {
+        var mvt = $(this).val();
+        if (mvt == "I01") {
+            $('#div-chkConfig').show();
+        } else {
+            $('#div-chkConfig').hide();
+            $('#config').empty();
+        }
+    })
+
+    $('#save').click(function (e) {
+        // asset movement data
+        var asset_number = $('#asset_number').text().trim();
+        if (asset_number == "") {
+            notify("请输入资产编号", "warning");
+            e.preventDefault();
+            return
+        }
+        var mvt = $('#mvt').val();
+        if (mvt == "") {
+            notify("请选择资产移动", "warning");
+            e.preventDefault();
+            return
+        }
+        var docDate = $('#doc_date').val();
+        var fromEmployee = $('input[name="from_employee"]').val();
+        var fromLoc = $('input[name="from_loc"]').val();
+        var toEmployee = $('input[name="to_employee"]').val();
+        var toLoc = $('input[name="to_loc"]').val();
+        var qty = $('input[name="qty"]').val();
+        var remark = $('input[name="remark"]').val();
+
+        // show/hide status
+        var config = $('#chkConfig').prop('checked');
+        var configInfo = $('#info').val();
+
+        var assetMov = {
+            assetNumber: asset_number,
+            mvt: mvt,
+            documentDate: docDate,
+            fromEmployee: fromEmployee,
+            toEmployee: toEmployee,
+            fromLoc: fromLoc,
+            toLoc: toLoc,
+            qty: Number(qty),
+            remark: remark
+        }
+
+        var obj = {};
+        obj.assetMov = assetMov;
+        obj.config = config;
+        if (configInfo != undefined) {
+            obj.computerConfig = JSON.parse(configInfo);
+        }
+
+        $.ajax({
+            url: '/asset/management/mov',
+            type: 'POST',
+            data: {
+                info: JSON.stringify(obj),
+                csrf_token: "{{.CSRFToken}}"
+            },
+            dataType: 'json',
+            success: function (ret) {
+                //  don't jump to index page
+                //toast(mvtName, ret.Message)
+                //  reset form and select
+                // $('form')[0].reset();
+                //  select2
+                // $('#dev_id').val('').trigger('change');
+                // $('#status_id').val('').trigger('change');
+
+                var mvtName = $('#mvt option:selected').text();
+                if (ret.Status == "success") {
+                    window.location = '/asset/management/mov';
+                }
+                notify(ret.Message, ret.Status)
+            },
+            error: function (a, b, c) {
+                console.log(a, b, c);
+            }
+        });
+    });
+</script>
+{{end}}

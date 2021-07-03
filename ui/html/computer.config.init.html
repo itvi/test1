@@ -1,0 +1,143 @@
+{{template "base" .}}
+{{define "title"}}初始化{{end}}
+{{define "css"}}
+<style>
+    #ip {
+        border: 4px solid #0d6efd;
+        border-radius: 0;
+    }
+
+    .value {
+        width: 80%;
+        float: right;
+    }
+
+    h5 {
+        padding: 10px;
+        margin: 0 0 2px;
+        border-radius: 4px;
+        font-size: 1.2rem;
+        font-weight: bolder;
+    }
+
+    /* init button */
+
+    #init {
+        display: block;
+        margin: 0 auto;
+        height: 3rem;
+        width: 10rem;
+    }
+
+    span.spinner-border {
+        vertical-align: middle;
+    }
+
+    span.bg-info {
+        vertical-align: middle !important;
+    }
+</style>
+{{end}}
+
+{{define "body"}}
+<div class="container mt-5">
+    <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+    <div class="input-group">
+        <input id="ip" type="text" class="form-control" placeholder="请输入IP地址或网段(10.19.1.0-10.19.1.255)" />
+        <button id="search" class="btn btn-primary input-group-text">
+            <span class="spinner-border spinner-border-sm visually-hidden"></span>
+            查看配置
+        </button>
+    </div>
+
+    <div id="number" class="mt-3 badge bg-success" style="font-size: 2rem"></div>
+    <div id="config" class="mt-3"></div>
+</div>
+{{end}}
+
+{{define "script"}}
+<script>
+    $("#search").click(function () {
+        var ip = $("#ip").val();
+        if (ip.trim() == "") {
+            notify("请输入IP地址或网段", "warning");
+            return;
+        }
+
+        // 网段
+        var ips = ip.split("-");
+        if (ips.length == 2) {
+            if (!isIP(ips[0]) || !isIP(ips[1])) {
+                notify("请输入正确的IP地址", "warning");
+                return;
+            }
+        }
+
+        if (ips.length == 1) {
+            if (!isIP(ips[0])) {
+                notify("请输入正确的IP地址", "warning");
+                return;
+            }
+        }
+
+        $(".spinner-border").removeClass("visually-hidden");
+        $(this).addClass("disabled");
+
+        $("#config").empty();
+        $("#number").text("");
+        var number = 0;
+
+        $.ajax({
+            url: "/searchByIPs",
+            data: {
+                ip: ip,
+            },
+            success: function (r) {
+                $("#config").html(r);
+                $(".spinner-border").addClass("visually-hidden");
+                $("#search").removeClass("disabled");
+                // how many ips
+                var ips = JSON.parse($("#info").val());
+                ips.forEach((ip) => {
+                    if (ip.cs != null) {
+                        number++;
+                    }
+                });
+                $("#number").text(number);
+            },
+            error: function (jqxhr, textStatus, error) {
+                console.log(jqxhr);
+                $(".spinner-border").addClass("visually-hidden");
+                $("#search").removeClass("disabled");
+                notify(xhr.status + " " + xhr.statusText, "danger");
+            },
+        });
+    });
+
+    // initialize computer config information(add to database)
+    $('#config').on('click', '#init', function () {
+        $('.spinner-border').removeClass('visually-hidden');
+        $(this).addClass('disabled');
+
+        $.ajax({
+            url: '/computer/config/init',
+            method: 'POST',
+            data: {
+                info: $('#info').val(),
+                csrf_token: $('input[name="csrf_token"]').val()
+            },
+            success: function (r) {
+                console.log(r)
+                $('.spinner-border').addClass('visually-hidden');
+                $('#init').text('OK').removeClass('btn-danger').addClass('btn-success');
+            },
+            error: function (jqxhr, textStatus, error) {
+                console.log(jqxhr);
+                $(".spinner-border").addClass("visually-hidden");
+                $("#search").removeClass("disabled");
+                notify(xhr.status + " " + xhr.statusText, "danger");
+            },
+        })
+    }); // end init click
+</script>
+{{end}}

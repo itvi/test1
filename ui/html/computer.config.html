@@ -1,0 +1,89 @@
+{{if .ComputerConfig}}
+<div class="">
+    <input type="hidden" id="info" name="info" value="{{.GenericString}}">
+    <input type="hidden" id="exist">
+    <input type="hidden" name="where" id="where">
+    {{with .ComputerConfig}}
+    <ul class="list-group list-group-flush">
+        <h5>电脑系统</h5>
+        {{range .CS}}
+        <li class="list-group-item">
+            <span class="label">主机名</span>
+            <span class="value">{{.HostName}}</span>
+        </li>
+        <li class="list-group-item">
+            <span class="label">登录用户</span>
+            <span class="value">{{.UserName}}</span>
+        </li>
+        {{end}}
+        <h5>操作系统</h5>
+        {{range .OS}}
+        <li class="list-group-item">
+            <span class="label">操作系统</span>
+            <span class="value">{{.Caption}}</span>
+        </li>
+        <li class="list-group-item">
+            <span class="label">版本</span>
+            <span class="value">{{.Version}}</span>
+        </li>
+        <li class="list-group-item">
+            <span class="label">安装日期</span>
+            <span class="value">{{.InstallDate|fd}}</span>
+        </li>
+        {{end}}
+        <h5>CPU</h5>
+        {{range .CPU}}
+        <li class="list-group-item">
+            <span class="label">名称</span>
+            <span class="value">{{.Name}}</span>
+        </li>
+        <li class="list-group-item">
+            <span class="label">核心</span>
+            <span class="value">{{.Cores}}</span>
+        </li>
+        {{end}}
+        <h5>硬盘</h5>
+        {{range .Disk}}
+        <li class="list-group-item">
+            <span class="label">型号</span>
+            <span class="value">{{.Model}}</span>
+        </li>
+        <li class="list-group-item">
+            <span class="label">容量</span>
+            <span class="value">{{.Size|GB}}</span>
+        </li>
+        <li class="list-group-item">
+            <span class="label">序列号</span>
+            <span class="value">{{.SN}}</span>
+        </li>
+        {{end}}
+        <h5>内存</h5>
+        {{range .Mem}}
+        <li class="list-group-item">
+            <span class="label">型号</span>
+            <span class="value">{{.Manufacturer}}</span>
+        </li>
+        <li class="list-group-item">
+            <span class="label">容量</span>
+            <span class="value">{{.Capacity|GB}}</span>
+        </li>
+        {{end}}
+        <h5>网卡</h5>
+        {{range .Net}}
+        <li class="list-group-item">
+            <span class="label">名称</span>
+            <span class="value">{{.Description}}</span>
+        </li>
+        <li class="list-group-item">
+            <span class="label">MAC</span>
+            <span class="value">{{.MAC}}</span>
+        </li>
+        {{end}}
+    </ul>
+    {{end}}
+</div>
+{{else}}
+<div class="container mt-3 card bg-warning">
+    <div class="card-body">无法访问</div>
+</div>
+{{end}}

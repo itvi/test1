@@ -1,0 +1,41 @@
+{{template "base" .}}
+{{define "title"}}新类型{{end}}
+{{define "body"}}
+    <div class="container">
+        <h4 class="my-3">添加类型</h4>
+        <hr>
+        <form action="/asset/categories" method="POST">
+            <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+            {{with .Form}}
+                {{with .Errors.Get "generic"}}
+                    <div class="my-2 card bg-warning">
+                        <div class="card-body mx-auto">
+                            <span>{{.}}</span>
+                        </div>
+                    </div>
+                {{end}}
+                <div class="mb-3">
+                    <label for="code" class="form-label">编号</label>
+                    {{with .Errors.Get "code"}}
+                        <label class="error">
+                            <i class="icon-error-outline"></i>
+                            {{.}}
+                        </label>
+                    {{end}}
+                    <input type="text" id="code" name="code" class="form-control" value='{{.Get "code"}}'>
+                </div>
+                <div class="mb-3">
+                    <label for="name" class="form-label">名称</label>
+                    {{with .Errors.Get "name"}}
+                        <label class="error">
+                            <i class="icon-error-outline"></i>
+                            {{.}}
+                        </label>
+                    {{end}}
+                    <input type="text" id="name" name="name" class="form-control" value='{{.Get "name"}}'>
+                </div>
+                <input type="submit" value="保存" class="btn btn-primary"/>
+            </form>
+        {{end}}
+    </div>
+{{end}}
