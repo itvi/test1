@@ -141,6 +141,7 @@ function notify(message, type) {
             align: "center"
         },
         delay: delay,
+        mouse_over: 'pause',
         animate: {
             enter: "animate__animated animate__fadeInDown",
             exit: "animate__animated animate__fadeOutUp"
